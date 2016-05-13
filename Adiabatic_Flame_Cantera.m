@@ -15,19 +15,24 @@ clear all; close all; clc;
 gas = IdealGasMix('gri30.xml');
 
 % Constants
-Po = 101300;                % Pa
-To = 25 + 273;              % K
+Po = 170; %psia
+To = 25 + 273; % K
 
 % Create the composition vectors
 % There are 53 species includd in GRI30, so this will be the size of our array
 nsp = nSpecies(gas); 
 
-% we want to know the index of relevant species
-iCH4  = speciesIndex(gas,'CH4'); 
+% we want to know the index of relevant species 
 iCO2 = speciesIndex(gas,'CO2');
 iO2  = speciesIndex(gas,'O2'); 
-iN2  = speciesIndex(gas,'N2');
+iCO  = speciesIndex(gas,'CO');
 iH2O = speciesIndex(gas,'H2O');
+iH2 = speciesIndex(gas,'H2');
+iH = speciesIndex(gas,'H');
+iO = speciesIndex(gas,'O');
+iOH = speciesIndex(gas,'OH');
+iC = speciesIndex(gas,'C');
+iC2H4 = speciesIndex(gas,'C2H4');
 
 % Note that cantera uses x for mole fractions (and y for mass fractions)
 x_r       = zeros(nsp,1);

@@ -1,6 +1,7 @@
 function T0 = combustion(phi)
 %%
 tic
+
 % Calculate the adiabatic flame temperature of stoichiometric 
 % methane combustion with engineering air
 % CH4 + 2(O2 + 3.76N2) -> 2H2O + CO2 + 2*3.76N2
