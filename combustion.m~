@@ -26,12 +26,12 @@ function T0 = combustion(phi)
     iC2H4 = speciesIndex(gas,'C2H4');
     
     %Molar masses
-molmass = molarMasses(gas);
+
     
     % Note that cantera uses x for mole fractions (and y for mass fractions)
     x_r       = zeros(nsp,1);
-    x_r(iC2H4) = 1 / molmass(iC2H4);
-    x_r(iO2)  = phi / molmass(iO2);
+    x_r(iC2H4) = 1 / M_C2H4;
+    x_r(iO2)  = phi / M_O2;
     x_r = x_r./sum(x_r); %good to normalize, although cantera should do it automatically
     
     x_p       = zeros(nsp,1);
