@@ -12,7 +12,7 @@ figure(1)
 plot(phi, T0)
 xlabel('Mixture Ratio')
 ylabel('Stagnation Temperature')
-3740
+%3740 %temperature that T0 graph should peak at 
 
 
 %% Take T0 and do things
