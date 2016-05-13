@@ -1,0 +1,6 @@
+clear all;
+close all;
+
+phi = linspace(10,1, 100);
+
+T0 = 
