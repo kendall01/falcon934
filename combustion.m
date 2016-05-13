@@ -40,27 +40,42 @@ molmass = molarMasses(gas);
     % define state)
     set(gas,'T',To,'P',Po,'X',x_r);
     
-    h_r = enthalpy_mole(gas); % J/kmol
-    LHV = 44E6; %J/kg
+    %stoichiometric coefficeints
+    z_C2H4 = 1;
+    z_O2 = 3;
+    z_CO2 = 2;
+    z_H2O = 2;
     
-    % Test temperatures until product enthalpy matches
-    h_p = -1e10; % start at a very low enthalpy
-    T = To;  % start at To and march up in T
-    dT = 1; % define temp step
+    %define LHV and known enthalpies of formation
+    LHV_HDPE = 44E6; %J/kg;
+    hf_C2H4 = 52.3; % kj/mol @ 298  from http://www.kentchemistry.com/links/Kinetics/EnthalpyFormation.htm
+    hf_C2H4 = hf_C2H4 / molmass(iC2H4) * 10^6; %J/kg
+    hf_H2O = -241.8; %kj/mol  from kentchem. water vapor
+    hf_H2O = hf_H2O / molmass(iH2O) * 10^6; %J/kg
+    hf_CO2 = -393.5; %kj/mol  from kentchem. water vapor
+    hf_CO2 = hf_CO2 / molmass(iCO2) * 10^6; %J/kg
+    hf_O2 = 0;
     
-    while h_p < h_r
-        
-        T = T + dT;
-        set(gas,'T',T,'P',Po,'X',x_p);
-        h_p = enthalpy_mole(gas);    % as compared to computing the enthalpy via integrals for each species
-        
-    end
+    %Calculate hf_HDPE using chemistry
+    hf_HDPE  = (- z_O2 * molmass(iO2) * hf_O2 + z_CO2 * molmass(iCO2) * hf_CO2 + z_H2O * molmass(iH2O) * hf_H2O + molmass(iC2H4) * LHV_HDPE) / (z_C2H4 * molmass(iC2H4));
+    %hf_HDPE should be about 1.94e6. 
+    h_r = enthalpy_mass(gas);
+    hDiff = hf_HDPE - hf_C2H4; %J/kg of fuel
+    massfrac = massFractions(gas);
+    hDiff = hDiff * massfrac(iC2H4); %J/kg of total gas
+    set(gas,'P',Po,'H', h_r + hDiff);
+
     
-    Adiabatic_Flame_Temp = T
+%     find enthalpy of formation of hdpe using LHV
+%    diff = enthalpy of formation of c2h4 and hdpe
+%    add in diff
+%     
+
+    
     
     % Now lets try using the equilibrate function
     % composition doesnt change unless you equilibrate or define it with x
-    set(gas,'T',To,'P',Po,'X',x_r);
+%     set(gas,'T',To,'P',Po,'X',x_r);
     
     % Allow the reactants to reach equilibrium (minimize g) at constant
     % enthalpy and pressure
