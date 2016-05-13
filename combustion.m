@@ -69,6 +69,6 @@ molmass = molarMasses(gas);
     % The temperature of this gas is the adiabatic flame temperature
     % more accurate, because it takes into account minor species
     T0 = temperature(gas);
-    
+    33
     toc
 end
