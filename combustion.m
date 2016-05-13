@@ -1,4 +1,4 @@
-function T0 = combustion(phi)
+function [T0, gas]= combustion(phi)
     %phi is the mixture ratio = mass of oxygen/mass of fuel
     tic
     
@@ -34,7 +34,7 @@ molmass = molarMasses(gas);
     x_r(iO2)  = phi / molmass(iO2);
     x_r = x_r./sum(x_r); %good to normalize, although cantera should do it automatically
     
-    x_p       = zeros(nsp,1);
+    x_p = zeros(nsp,1);
 
     % Get the enthalpy of the reactants at To (need 2 independent variables to
     % define state)
@@ -84,6 +84,6 @@ molmass = molarMasses(gas);
     % The temperature of this gas is the adiabatic flame temperature
     % more accurate, because it takes into account minor species
     T0 = temperature(gas);
-    
+    33;
     toc
 end
