@@ -1,67 +1,52 @@
 clear all;
 close all;
 
-phi = linspace(10,1, 100);
+phi = linspace(10,1,100);
 
 T0 = zeros(length(phi),1);
+Tt = zeros(length(phi),1);
+c = zeros(length(phi),1);
+
 for i = 1:length(phi)
     
-    T0(i) = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
-    
-    h_0 = enthalpy_mole(gas);
-    P_new = pressure(gas);
-    S1= entropy_mole(gas);
-    
+    [T0(i),gas] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
+    state_ref = gas; %set a reference state 1 returned from combustion for a single phi value
+    h_0 = enthalpy_mole(state_ref); %define original enthalpy to compare
+    P_new = pressure(state_ref); %P_new defined here but will change immediately in loop
+    S1 = entropy_mole(state_ref); %define original enthalpy to reference bc nozzle is isentropic
+    RHS = 0; %start RHS at arbitrary value, anything greater than h_0 which is negative
+    x_r = moleFractions(state_ref); %define original mole fractions (may be uneccessary)
+    state_new = state_ref; %initialized but should change once the loop is entered
     while h_0 < RHS
-        set(gas,'S',S1,'P',P_new,'X',x_r);
-        P_new = P_new - 1;
-        h_t = enthalpy_mole(gas);
-        speed = (soundspeed(gas))^2/2;
-        RHS = h_t + speed;
+        %set(gas,'P',P_new); % set the current gas to a new P 
+        SP= [S1 P_new]; %vector of constant entropy and new pressure to set the gas to a new state
+        state_new = setState_SP(state_ref, SP); %should keep all same, but set gas to a new pressure
+        state_new = equilibrate(state_new, 'SP'); %should equilibrate gas to a all new thermo props given constant S and same new P
+        h_t = enthalpy_mole(state_new); %find enthalpy of new gas
+        speed = (soundspeed(state_new))^2/2; %find Kinetic E term of new gas
+        RHS = h_t + speed %calculate RHS for comparison to h_0
+        P_new = P_new - 1000; %change P for next iteration
     end
-    Tt = temperature(gas)    % nozzle throat temp found by 
+    %why is state_ref changing with state_new everytime?
+    Tt(i) = temperature(state_new)    % nozzle throat temp found by equilibrating h0= ht + Vt^2/2
     
 
-    c= pressure(gas)/(density(gas)*soundspeed(gas));  %c*= P0/(rho*Ut) dependent on new gas mixture at each mix ratio
+    c(i)= pressure(gas)/(density(gas)*soundspeed(gas));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
     
 end
 
-figure(1)
-plot(phi, T0)
+figure(1);
+plot(phi, T0);
 xlabel('Mixture Ratio')
 ylabel('Stagnation Temperature')
-3740
+figure(2)
+plot(phi, Tt)
+xlabel('Mixture Ratio')
+ylabel('Nozzle Throat Temperature')
+figure(3)
+plot(phi, c)
+xlabel('Mixture Ratio')
+ylabel('C*')
 
-
-%% Finding Tt
-
-%h0= ht + Vt^2/2;
-%Iterate Pressure P0--> Pt
-%set(gas,'T',To,'P',Po,'X',x_r);
-
-for i = 1:length(phi)
-
-    h_0 = enthalpy_mole(gas);
-    P_new = pressure(gas);
-    S1= entropy_mole(gas);
-    
-    while h_0 < RHS
-        set(gas,'S',S1,'P',P_new,'X',x_r);
-        P_new = P_new - 1;
-        h_t = enthalpy_mole(gas);
-        speed = (soundspeed(gas))^2/2;
-        RHS = h_t + speed;
-    end
-    Tt = temperature(gas)
-    
-end
-
-%% Finding c*
-
-
-
-for i = 1:length(phi)
-    c= pressure(gas)/(density(gas)*soundspeed(gas));
-end
-
+%3740 --> temperature that T0 graph should peak at 
 
