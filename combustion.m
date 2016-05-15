@@ -1,8 +1,6 @@
-function [T0, gas]= combustion(phi)
+function [T0, gas, y_r]= combustion(phi)
     %phi is the mixture ratio = mass of oxygen/mass of fuel
-    tic
-    
-    
+ 
     % Initialize the gas object -- Only do this once per script
     gas = IdealGasMix('me140_species.xml');
     
@@ -26,19 +24,20 @@ function [T0, gas]= combustion(phi)
     iC2H4 = speciesIndex(gas,'C2H4');
     
     %Molar masses
-molmass = molarMasses(gas);
+    molmass = molarMasses(gas);
     
     % Note that cantera uses x for mole fractions (and y for mass fractions)
-    x_r       = zeros(nsp,1);
-    x_r(iC2H4) = 1 / molmass(iC2H4);
-    x_r(iO2)  = phi / molmass(iO2);
-    x_r = x_r./sum(x_r); %good to normalize, although cantera should do it automatically
+    y_r       = zeros(nsp,1);
+    y_r(iC2H4) = 1 / molmass(iC2H4);
+    y_r(iO2)  = phi / molmass(iO2);
+    y_r = y_r./sum(y_r); %good to normalize, although cantera should do it automatically
     
-    x_p = zeros(nsp,1);
+    y_p = zeros(nsp,1);
 
     % Get the enthalpy of the reactants at To (need 2 independent variables to
     % define state)
-    set(gas,'T',To,'P',Po,'X',x_r);
+    set(gas,'T',To,'P',Po,'Y',y_r);
+    equilibrate(gas,'HP'); %Cantera is weird, gotta do this here and after changing enthalpy
     
     %stoichiometric coefficeints
     z_C2H4 = 1;
@@ -64,18 +63,14 @@ molmass = molarMasses(gas);
     massfrac = massFractions(gas);
     hDiff = hDiff * massfrac(iC2H4); %J/kg of total gas
     set(gas,'P',Po,'H', h_r + hDiff);
-
     
-%    find enthalpy of formation of HDPE using LHV
-%    diff = enthalpy of formation of c2h4 and hdpe
-%    add in diff
+    % find enthalpy of formation of HDPE using LHV
+    % diff = enthalpy of formation of c2h4 and hdpe
+    % add in diff
      
-
-    
-    
     % Now lets try using the equilibrate function
     % composition doesnt change unless you equilibrate or define it with x
-%     set(gas,'T',To,'P',Po,'X',x_r);
+    % set(gas,'T',To,'P',Po,'X',x_r); ---> change to mass fractions instead
     
     % Allow the reactants to reach equilibrium (minimize g) at constant
     % enthalpy and pressure
@@ -85,5 +80,4 @@ molmass = molarMasses(gas);
     % more accurate, because it takes into account minor species
     T0 = temperature(gas);
     33;
-    toc
 end
