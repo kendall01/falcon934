@@ -61,7 +61,7 @@ function [T0, gas, y_r]= combustion(phi)
     %Calculate hf_HDPE using chemistry
     hf_HDPE  = (z_CO2 * molmass(iCO2) * hf_CO2 + z_H2O * molmass(iH2O) * hf_H2O) / (z_C2H4 * molmass(iC2H4)) + HHV_HDPE;
     h_r = enthalpy_mass(gas);
-    hDiff = hf_C2H4 - hf_HDPE; %J/kg of fuel
+    hDiff = hf_C2H4 - hf_HDPE %J/kg of fuel
     massfrac = massFractions(gas);
     hDiff = hDiff * massfrac(iC2H4); %J/kg of total gas
     set(gas,'P',Po,'H', h_r + hDiff);

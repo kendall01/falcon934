@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-phi = linspace(10,1,100);
+phi = linspace(10,1);
 
 T0 = zeros(length(phi),1);
 
@@ -19,6 +19,7 @@ Cf_frozen = zeros(length(phi),1);
 A_ratio_frozen = zeros(length(phi),1);
 Ue = zeros(length(phi),1);
 Ut = zeros(length(phi),1);
+frozen_mole_fracs = zeros(12,length(phi));
 
 
 %reacted vectors
@@ -31,6 +32,7 @@ Cf_reacted = zeros(length(phi),1);
 A_ratio_reacted = zeros(length(phi),1);
 Ut_reacted = zeros(length(phi),1);
 Ue_reacted = zeros(length(phi),1);
+reacted_mole_fracs = zeros(12,length(phi));
 
 Po = 1.172E6;  % Pa
 
@@ -49,7 +51,7 @@ for i = 1:length(phi)
         h_t = enthalpy_mass(gas); %find enthalpy of new gas
         speed = (soundspeed(gas))^2/2; %find Kinetic E term of new gas
         RHS = h_t + speed; %calculate RHS for comparison to h_0
-        P_new = P_new - 50; %change P for next iteration
+        P_new = P_new - 1000; %change P for next iteration
     end
     
     Tt_frozen(i) = temperature(gas); %store temps while gas is at throat P and T
@@ -69,7 +71,7 @@ for i = 1:length(phi)
     Ue(i) = sqrt(2*(h_0(i)- h_e(i)));
     A_ratio_frozen(i) = rho1(i)*Ut(i)/(rho2(i)*Ue(i));
     Cf_frozen(i) = Ue(i)/c_frozen(i);
-    frozen_mole_fracs(:,1) = moleFractions(gas);
+    frozen_mole_fracs(:,i) = moleFractions(gas);
     
     % Now find Reacted Gas Throat conditions
     set(gas,'P',Po,'S',S1,'Y',y_r); %must reset to original gas compostion
@@ -85,7 +87,7 @@ for i = 1:length(phi)
         h_t = enthalpy_mass(gas); %find enthalpy of new gas
         speed = (soundspeed(gas))^2/2; %find Kinetic E term of new gas
         RHS = h_t + speed; %calculate RHS for comparison to h_0
-        P_new = P_new - 50; %change P for next iteration
+        P_new = P_new - 1000; %change P for next iteration
     end
     
     Tt_reacted(i) = temperature(gas); %store temps while gas is at throat P and T
@@ -147,7 +149,7 @@ xlabel('Mixture Ratio')
 ylabel('Area Ratio (Ae/At)')
 legend('Frozen', 'Reacted');
 figure(7)
-plot(phi, frozen_mole_fracs);
+plot(phi, frozen_mole_fracs, 'Linewidth', 1.1);
 xlabel('Mixture Ratio');
 ylabel('Mole Fractions');
 legend('H', 'H2', 'O', 'O2', 'OH', 'C', 'CO', 'CO2', 'H2O', 'C2H4');
