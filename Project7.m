@@ -11,10 +11,10 @@ for i = 1:length(phi)
     
     [T0(i),gas] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
     state_ref = gas; %set a reference state 1 returned from combustion for a single phi value
-    h_0 = enthalpy_mole(state_ref); %define original enthalpy to compare
+    h_0(i) = enthalpy_mole(state_ref); %define original enthalpy to compare
     P_new = pressure(state_ref); %P_new defined here but will change immediately in loop
     S1 = entropy_mass(state_ref); %define original entropy (mass specific since setState_SP uses that) to reference bc nozzle is isentropic
-    RHS = 0; %start RHS at arbitrary value, anything greater than h_0 which is negative
+    RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     x_r = moleFractions(state_ref); %define original mole fractions (may be uneccessary)
     state_new = state_ref; %initialized but should change once the loop is entered
     
@@ -40,14 +40,11 @@ for i = 1:length(phi)
 end
 
 figure(1);
-plot(phi, T0);
+plot(phi, T0, phi, Tt)
 xlabel('Mixture Ratio')
-ylabel('Stagnation Temperature')
+ylabel('Temperature [K]') %This is in kelvin, isn't it?
+legend('Stagnation Temperature', 'Nozzle Throat Temperature')
 figure(2)
-plot(phi, Tt)
-xlabel('Mixture Ratio')
-ylabel('Nozzle Throat Temperature')
-figure(3)
 plot(phi, c)
 xlabel('Mixture Ratio')
 ylabel('C*')
