@@ -16,7 +16,7 @@ Tt_frozen = zeros(length(phi),1);
 Te_frozen = zeros(length(phi),1);
 c_frozen = zeros(length(phi),1);
 Cf_frozen = zeros(length(phi),1);
-Area_ratio_frozen = zeros(length(phi),1);
+A_ratio_frozen = zeros(length(phi),1);
 Ue = zeros(length(phi),1);
 Ut = zeros(length(phi),1);
 
@@ -28,7 +28,7 @@ Tt_reacted = zeros(length(phi),1);
 Te_reacted = zeros(length(phi),1);
 c_reacted = zeros(length(phi),1);
 Cf_reacted = zeros(length(phi),1);
-Area_ratio_reacted = zeros(length(phi),1);
+A_ratio_reacted = zeros(length(phi),1);
 Ut_reacted = zeros(length(phi),1);
 Ue_reacted = zeros(length(phi),1);
 
@@ -67,8 +67,9 @@ for i = 1:length(phi)
     rho2(i) = density(gas);
     h_e(i) = enthalpy_mole(gas);
     Ue(i) = sqrt(2*(h_0(i)- h_e(i)));
-    Area_ratio_frozen = rho1(i)*Ut(i)/(rho2(i)*Ue(i));
+    A_ratio_frozen(i) = rho1(i)*Ut(i)/(rho2(i)*Ue(i));
     Cf_frozen(i) = Ue(i)/c_frozen(i);
+    frozen_mole_fracs(:,i) = moleFractions(gas);
     
     % Now find Reacted Gas Throat conditions
     set(gas,'P',Po,'S',S1,'Y',y_r); %must reset to original gas compostion
@@ -98,40 +99,57 @@ for i = 1:length(phi)
     rho2_2(i) = density(gas);
     h_e_reacted(i) = enthalpy_mole(gas);
     Ue_reacted(i) = sqrt(2*(h_0(i)- h_e_reacted(i)));
-    Area_ratio_reacted(i) = rho1(i)*Ut(i)/(rho2_2(i)*Ue_reacted(i));
+    A_ratio_reacted(i) = rho1(i)*Ut(i)/(rho2_2(i)*Ue_reacted(i));
     Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
+    reacted_mole_fracs(:,i) = moleFractions(gas);
 end
-
-figure(1);
-plot(phi, T0, phi, Tt_frozen, phi, Te_frozen);
-title('Frozen Case');
+% 
+% figure(1);
+% plot(phi, T0, phi, Tt_frozen, phi, Te_frozen);
+% title('Frozen Case');
+% xlabel('Mixture Ratio');
+% ylabel('Temperature [K]');
+% legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
+% figure(10);
+% plot(phi, T0, phi, Tt_frozen, phi, Te_frozen);
+% title('Reacted Case');
+% xlabel('Mixture Ratio');
+% ylabel('Temperature [K]');
+% legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
+% figure(2)
+% plot(phi, c_frozen, phi, c_reacted);
+% xlabel('Mixture Ratio');
+% ylabel('C*');
+% title('C* vs Mixture Ratio');
+% legend('Frozen', 'Reacted');
+% figure(3)
+% plot(phi, Ut, phi, Ut_reacted);
+% xlabel('Mixture Ratio');
+% ylabel('Throat Velocity (m/s)');
+% legend('Frozen', 'Reacted');
+% title('Throat Velocity');
+% figure(6)
+% plot(phi, Ue, phi, Ue_reacted);
+% xlabel('Mixture Ratio');
+% ylabel('Exit Velocity (m/s)');
+% legend('Frozen', 'Reacted');
+% title('Exit Velocity');
+% figure(4)
+% plot(phi, Cf_frozen, phi, Cf_reacted);
+% title('Cf Frozen');
+% xlabel('Mixture Ratio');
+% ylabel('Cf coefficient of thrust--- Units??');
+% legend('Frozen', 'Reacted');
+% figure(5)
+% plot(phi, A_ratio_frozen, phi, A_ratio_reacted)
+% title('Area ratio');
+% xlabel('Mixture Ratio')
+% ylabel('Area Ratio (Ae/At)')
+% legend('Frozen', 'Reacted');
+figure(7)
+plot(phi, frozen_mole_fracs);
 xlabel('Mixture Ratio');
-ylabel('Temperature [K]');
-legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
-figure(2)
-plot(phi, c_frozen, phi, c_reacted);
-xlabel('Mixture Ratio');
-ylabel('C*');
-title('C* vs Mixture Ratio');
-legend('Frozen', 'Reacted');
-figure(3)
-plot(phi, Ut_frozen, phi, Ut_reacted);
-xlabel('Mixture Ratio');
-ylabel('Throat Velocity (m/s)');
-legend('Frozen', 'Reacted');
-title('Ve frozen');
-figure(4)
-plot(phi, Cf_frozen, phi, Cf_reacted);
-title('Cf Frozen');
-xlabel('Mixture Ratio');
-ylabel('Cf coefficient of thrust--- Units??');
-legend('Frozen', 'Reacted');
-figure(5)
-plot(phi, A_ratio_frozen, phi, A_ratio_reacted)
-title('Area ratio');
-xlabel('Mixture Ratio')
-ylabel('Area Ratio (Ae/At)')
-legend('Frozen', 'Reacted');
-
+ylabel('Mole Fractions');
+legend('H', 'H2', );
 %3740 --> temperature that T0 graph should peak at 
 

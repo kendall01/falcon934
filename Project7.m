@@ -39,14 +39,14 @@ for i = 1:length(phi)
     
     % Begin with frozen throat
     [T0(i), gas, y_r] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
-    h_0(i) = enthalpy_mole(gas); %define original enthalpy to compare
+    h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
     S1 = entropy_mass(gas); %define original entropy (mass specific since setState_SP uses that) to reference bc nozzle is isentropic
     RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     
     while h_0 < RHS
         set(gas,'P',P_new,'S',S1); %should keep all same, but set gas to a new pressure
-        h_t = enthalpy_mole(gas); %find enthalpy of new gas
+        h_t = enthalpy_mass(gas); %find enthalpy of new gas
         speed = (soundspeed(gas))^2/2; %find Kinetic E term of new gas
         RHS = h_t + speed; %calculate RHS for comparison to h_0
         P_new = P_new - 50; %change P for next iteration
@@ -65,23 +65,24 @@ for i = 1:length(phi)
     set(gas,'P',P_e,'S',S1);
     Te_frozen(i) = temperature(gas);
     rho2(i) = density(gas);
-    h_e(i) = enthalpy_mole(gas);
+    h_e(i) = enthalpy_mass(gas);
     Ue(i) = sqrt(2*(h_0(i)- h_e(i)));
-    A_ratio_frozen = rho1(i)*Ut(i)/(rho2(i)*Ue(i));
+    A_ratio_frozen(i) = rho1(i)*Ut(i)/(rho2(i)*Ue(i));
     Cf_frozen(i) = Ue(i)/c_frozen(i);
+    frozen_mole_fracs(:,1) = moleFractions(gas);
     
     % Now find Reacted Gas Throat conditions
     set(gas,'P',Po,'S',S1,'Y',y_r); %must reset to original gas compostion
     equilibrate(gas,'SP'); %making sure the gas is reset (may be uneccesary, idk)
-    h_0_reacted(i) = enthalpy_mole(gas); %define original enthalpy to compare
-    RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
+    h_0_reacted(i) = enthalpy_mass(gas); %define original enthalpy to compare
+    RHS = h_0_reacted(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
     
     
     while h_0_reacted < RHS
         set(gas,'P',P_new,'S',S1); %should keep all same, but set gas to a new pressure
         equilibrate(gas,'SP'); %react gas to a new composition with each change in pressure
-        h_t = enthalpy_mole(gas); %find enthalpy of new gas
+        h_t = enthalpy_mass(gas); %find enthalpy of new gas
         speed = (soundspeed(gas))^2/2; %find Kinetic E term of new gas
         RHS = h_t + speed; %calculate RHS for comparison to h_0
         P_new = P_new - 50; %change P for next iteration
@@ -91,20 +92,27 @@ for i = 1:length(phi)
     Ut_reacted(i) = soundspeed(gas); %velocity at throat
     c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
     
-    % Reacted exit velocity
+    % Reacted exit
     set(gas,'P',P_e,'S',S1);
-    equilibrate(gas,'SP');
+    equilibrate(gas,'SP'); %don't know if this is necessary to re-do
     Te_reacted(i) = temperature(gas);
     rho2_2(i) = density(gas);
-    h_e_reacted(i) = enthalpy_mole(gas);
-    Ue_reacted(i) = sqrt(2*(h_0(i)- h_e_reacted(i)));
+    h_e_reacted(i) = enthalpy_mass(gas);
+    Ue_reacted(i) = sqrt(2*(h_0_reacted(i)- h_e_reacted(i)));
     A_ratio_reacted(i) = rho1(i)*Ut(i)/(rho2_2(i)*Ue_reacted(i));
     Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
+    reacted_mole_fracs(:,i) = moleFractions(gas);
 end
 
 figure(1);
 plot(phi, T0, phi, Tt_frozen, phi, Te_frozen);
 title('Frozen Case');
+xlabel('Mixture Ratio');
+ylabel('Temperature [K]');
+legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
+figure(10);
+plot(phi, T0, phi, Tt_frozen, phi, Te_frozen);
+title('Reacted Case');
 xlabel('Mixture Ratio');
 ylabel('Temperature [K]');
 legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
@@ -120,6 +128,12 @@ xlabel('Mixture Ratio');
 ylabel('Throat Velocity (m/s)');
 legend('Frozen', 'Reacted');
 title('Throat Velocity');
+figure(6)
+plot(phi, Ue, phi, Ue_reacted);
+xlabel('Mixture Ratio');
+ylabel('Exit Velocity (m/s)');
+legend('Frozen', 'Reacted');
+title('Exit Velocity');
 figure(4)
 plot(phi, Cf_frozen, phi, Cf_reacted);
 title('Cf Frozen');
@@ -132,12 +146,17 @@ title('Area ratio');
 xlabel('Mixture Ratio')
 ylabel('Area Ratio (Ae/At)')
 legend('Frozen', 'Reacted');
-figure(6)
-plot(phi, Ue, phi, Ue_reacted);
+figure(7)
+plot(phi, frozen_mole_fracs);
 xlabel('Mixture Ratio');
-ylabel('Exit Velocity (m/s)');
-legend('Frozen', 'Reacted');
-title('Exit Velocity');
-
+ylabel('Mole Fractions');
+legend('H', 'H2', 'O', 'O2', 'OH', 'C', 'CO', 'CO2', 'H2O', 'C2H4');
+title('Mole Fractions of Frozen Nozzle');
+figure(8)
+plot(phi, reacted_mole_fracs);
+xlabel('Mixture Ratio');
+ylabel('Mole Fractions');
+legend('H', 'H2', 'O', 'O2', 'OH', 'C', 'CO', 'CO2', 'H2O', 'C2H4');
+title('Mole Fractions of Reacted Nozzle');
 %3740 --> temperature that T0 graph should peak at 
 
