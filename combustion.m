@@ -1,4 +1,4 @@
-function T0 = combustion(phi)
+function [T0, gas]= combustion(phi)
     %phi is the mixture ratio = mass of oxygen/mass of fuel
     tic
     
@@ -34,7 +34,7 @@ molmass = molarMasses(gas);
     x_r(iO2)  = phi / molmass(iO2);
     x_r = x_r./sum(x_r); %good to normalize, although cantera should do it automatically
     
-    x_p       = zeros(nsp,1);
+    x_p = zeros(nsp,1);
 
     % Get the enthalpy of the reactants at To (need 2 independent variables to
     % define state)
@@ -47,12 +47,12 @@ molmass = molarMasses(gas);
     z_H2O = 2;
     
     %define LHV and known enthalpies of formation
-    LHV_HDPE = 44E6; %J/kg;
-    hf_C2H4 = 52.3; % kj/mol @ 298  from http://www.kentchemistry.com/links/Kinetics/EnthalpyFormation.htm
+    LHV_HDPE = 44e6; %J/kg;
+    hf_C2H4 = 52.3; % kJ/mol @ 298  from http://www.kentchemistry.com/links/Kinetics/EnthalpyFormation.htm
     hf_C2H4 = hf_C2H4 / molmass(iC2H4) * 10^6; %J/kg
-    hf_H2O = -241.8; %kj/mol  from kentchem. water vapor
+    hf_H2O = -241.8; %kJ/mol  from kentchem. water vapor
     hf_H2O = hf_H2O / molmass(iH2O) * 10^6; %J/kg
-    hf_CO2 = -393.5; %kj/mol  from kentchem. water vapor
+    hf_CO2 = -393.5; %kJ/mol  from kentchem. water vapor
     hf_CO2 = hf_CO2 / molmass(iCO2) * 10^6; %J/kg
     hf_O2 = 0;
     
@@ -66,10 +66,10 @@ molmass = molarMasses(gas);
     set(gas,'P',Po,'H', h_r + hDiff);
 
     
-%     find enthalpy of formation of hdpe using LHV
+%    find enthalpy of formation of HDPE using LHV
 %    diff = enthalpy of formation of c2h4 and hdpe
 %    add in diff
-%     
+     
 
     
     
@@ -84,6 +84,6 @@ molmass = molarMasses(gas);
     % The temperature of this gas is the adiabatic flame temperature
     % more accurate, because it takes into account minor species
     T0 = temperature(gas);
-    33
+    33;
     toc
 end
