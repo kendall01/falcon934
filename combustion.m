@@ -8,7 +8,6 @@ function [T0, gas, y_r]= combustion(phi)
     gas = IdealGasMix('me140_species.xml');
     
     % Constants
-%     Po = 1.172E6;  % Pa
     Po = 6.8e6; % Pa (68 bar)
     To = 25 + 273; % K
     
@@ -31,16 +30,16 @@ function [T0, gas, y_r]= combustion(phi)
     molmass = molarMasses(gas); % kg/kmol
     
     % Note that cantera uses x for mole fractions (and y for mass fractions)
-    x_r       = zeros(nsp,1);
-    x_r(iC2H4) = 1 / molmass(iC2H4);
-    x_r(iO2)  = phi / molmass(iO2);
-    x_r = x_r./sum(x_r); %good to normalize, although cantera should do it automatically
+    y_r       = zeros(nsp,1);
+    y_r(iC2H4) = 1 / molmass(iC2H4);
+    y_r(iO2)  = phi / molmass(iO2);
+    y_r = y_r./sum(y_r); %good to normalize, although cantera should do it automatically
     
-    x_p = zeros(nsp,1);
+    y_p = zeros(nsp,1);
 
     % Get the enthalpy of the reactants at To (need 2 independent variables to
     % define state)
-    set(gas,'T',To,'P',Po,'X',x_r);
+    set(gas,'T',To,'P',Po,'Y',y_r);
     
     %stoichiometric coefficeints (mol)
     z_C2H4 = 1;
@@ -66,7 +65,7 @@ function [T0, gas, y_r]= combustion(phi)
     hDiff = hf_C2H4 - hf_HDPE; %J/kg of fuel
     massfrac = massFractions(gas);
     hDiff = hDiff * massfrac(iC2H4); %J/kg of total gas
-    set(gas,'P',Po,'H', h_r + hDiff);
+    set(gas,'P',Po,'H',h_r - hDiff);
 
     
 %    find enthalpy of formation of HDPE using LHV
