@@ -1,13 +1,15 @@
 function [T0, gas, y_r]= combustion(phi)
     %phi is the mixture ratio = mass of oxygen/mass of fuel
-    tic
+    
+%     tic
     
     
     % Initialize the gas object -- Only do this once per script
     gas = IdealGasMix('me140_species.xml');
     
     % Constants
-    Po = 1.172E6;  % Pa
+%     Po = 1.172E6;  % Pa
+    Po = 6.8e6; % Pa (68 bar)
     To = 25 + 273; % K
     
     % Create the composition vectors
@@ -61,7 +63,7 @@ function [T0, gas, y_r]= combustion(phi)
     %Calculate hf_HDPE using chemistry
     hf_HDPE  = (z_CO2 * molmass(iCO2) * hf_CO2 + z_H2O * molmass(iH2O) * hf_H2O) / (z_C2H4 * molmass(iC2H4)) + HHV_HDPE;
     h_r = enthalpy_mass(gas);
-    hDiff = hf_C2H4 - hf_HDPE %J/kg of fuel
+    hDiff = hf_C2H4 - hf_HDPE; %J/kg of fuel
     massfrac = massFractions(gas);
     hDiff = hDiff * massfrac(iC2H4); %J/kg of total gas
     set(gas,'P',Po,'H', h_r + hDiff);
@@ -86,6 +88,6 @@ function [T0, gas, y_r]= combustion(phi)
     % more accurate, because it takes into account minor species
     T0 = temperature(gas);
     y_r = massfrac;
-    33;
-    toc
+    
+%     toc
 end
