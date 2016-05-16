@@ -1,7 +1,7 @@
 clear all;
 close all;
 tic
-phi = linspace(10,1,100);
+phi = linspace(25,1,100);
 
 T0 = zeros(length(phi),1);
 
@@ -123,12 +123,28 @@ legend('Stagnation Temperature', 'Throat Frozen', 'Throat Reacted', 'Exit Frozen
 % xlabel('Mixture Ratio');
 % ylabel('Temperature [K]');
 % legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
+
+
+%C* data calculations
+load('fire1.mat');
+P0_avg = 1000000;
+A_t = 0.0001824; % m^2 (from Piazza)
+delta_t = (final_index-start_index)/sampleRate; % seconds
+m_dot_fuel = (mfuel/1000)/delta_t; % kg/s
+m_dot_oxidizer = m_O2/delta_t; % kg/s
+m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
+ 
+phi_test = m_dot_oxidizer/m_dot_fuel;
+cstar_test = P0_avg*A_t/m_dot_total;
+
+
+
 figure(2)
-plot(phi, c_frozen, phi, c_reacted, 'Linewidth', 1.2);
+plot(phi, c_frozen, phi, c_reacted, phi_test, cstar_test, '*','Linewidth', 1.2);
 xlabel('Mixture Ratio');
 ylabel('C* (m/s)');
 title('C* vs Mixture Ratio');
-legend('Frozen', 'Reacted');
+legend('Frozen', 'Reacted', 'Measured C*', 'Location', 'NorthWest');
 % figure(3)
 % plot(phi, Ut, phi, Ut_reacted, 'Linewidth', 1.2);
 % xlabel('Mixture Ratio');
