@@ -113,9 +113,10 @@ end
 
 figure(1);
 plot(phi, T0, 'g', phi, Tt_frozen, 'b-.', phi, Tt_reacted, 'b', phi, Te_frozen, 'r-.', phi, Te_reacted, 'r', 'Linewidth', 1.2);
-title('Frozen Case');
+title('Temperatures Across Nozzle (Inlet, Throat, Exit)');
 xlabel('Mixture Ratio');
 ylabel('Temperature [K]');
+
 legend('Stagnation Temperature', 'Throat Frozen', 'Throat Reacted', 'Exit Frozen', 'Exit Reacted');
 % figure(10);
 % plot(phi, T0, phi, Tt_reacted, phi, Te_reacted, 'Linewidth', 1.2);
@@ -144,6 +145,7 @@ plot(phi, c_frozen, phi, c_reacted, phi_test, cstar_test, '*','Linewidth', 1.2);
 xlabel('Mixture Ratio');
 ylabel('C* (m/s)');
 title('C* vs Mixture Ratio');
+
 legend('Frozen', 'Reacted', 'Measured C*', 'Location', 'NorthWest');
 % figure(3)
 % plot(phi, Ut, phi, Ut_reacted, 'Linewidth', 1.2);
@@ -159,7 +161,7 @@ legend('Frozen', 'Reacted');
 title('Exit Velocity (Ve)');
 figure(4)
 plot(phi, Cf_frozen, phi, Cf_reacted, 'Linewidth', 1.2);
-title('Cf Frozen');
+title('Coefficient of Thrust at Nozzle Exit');
 xlabel('Mixture Ratio');
 ylabel('Coefficient of Thrust (Cf)');
 legend('Frozen', 'Reacted');
