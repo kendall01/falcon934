@@ -5,14 +5,14 @@ RING_HOLES = 8; %num holes making up the ring of holes
 RING_DIA = 5/16 * IN_TO_M; %initial diameter of holes in ring, in meters
 CENTER_DIA = 5/8 * IN_TO_M;
 LENGTH = 5.375 * IN_TO_M;
-N = 100; %number of time steps
+N = 200; %number of time steps
 MDOT_O = .0755; %kg/s TODO: Change to vector based off data?
 n = 0.55; % TODO: Figure out based on data
 a = .132; %regression coefficient for HDPE from http://www.planete-sciences.org/espace/basedoc/images/d/d7/Aiaa2006HybridFuelRegression.pdf
 RHO_HDPE = NaN;
 UNITS = 10; % converts from kg/m^2-s to g/cm^2-s
 
-t_f = 2; %number of seconds to run burn. 
+t_f = .01; %number of seconds to run burn. 
 tstep = t_f/N;
 mdot_O2 = linspace(MDOT_O,MDOT_O, N);
 
