@@ -6,7 +6,7 @@ NUM_RING_HOLES = 8;
 IN_TO_M = .0254;
 R = .018; %m radius of outer ring. how far from the center of the grain does the circle of ring holes lie
 OR = 1.995/2 * IN_TO_M; %outer radius of fuel grain
-N = 200; 
+N = 100; 
 
 figure(1)
 for i = 1:length(centerD)
@@ -20,8 +20,8 @@ for i = 1:length(centerD)
     [ring(:,1), ring(:,2)] = pol2cart(linspace(-2*pi, 2*pi,N)', linspace(ringD(i)/2,ringD(i)/2,N)');
     for j = 1:NUM_RING_HOLES
         hold on
-        x_off = R * cos((pi/4) * j);
-        y_off = R * sin((pi/4) * j);
+        x_off = R * cos((2*pi/NUM_RING_HOLES) * j);
+        y_off = R * sin((2*pi/NUM_RING_HOLES) * j);
         plot(ring(:,1) + x_off, ring(:,2) + y_off)
     end
 %     axis([-OR OR -OR OR])
