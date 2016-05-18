@@ -1,7 +1,7 @@
 clear all;
 close all;
-
-phi = linspace(10,1,100);
+tic
+phi = linspace(25,1,100);
 
 T0 = zeros(length(phi),1);
 
@@ -37,8 +37,12 @@ reacted_mole_fracs = zeros(12,length(phi));
 % Po = 1.172E6;  % Pa
 Po = 6.8e6; % Pa (68 bar)
 
-
-for i = 1:length(phi)
+%parfor runs this loop in parallel. It only works on 2016a with the
+%parallels toolbar, otherwise it will still run, but will just run as a
+%normal for loop. On the first run, it will take longer as it has to launch
+%the parallel pool which takes like a minute. But on subsequent runs it is
+%much faster.
+parfor i = 1:length(phi)
     i
     % Begin with frozen throat
     [T0(i), gas, y_r] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
@@ -81,14 +85,14 @@ for i = 1:length(phi)
     RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
     
-    
     while h_0(i) < RHS
         set(gas,'P',P_new,'S',S1); %should keep all same, but set gas to a new pressure
         equilibrate(gas,'SP'); %react gas to a new composition with each change in pressure
         h_t = enthalpy_mass(gas); %find enthalpy of new gas
         speed = (soundspeed(gas))^2/2; %find Kinetic E term of new gas
         RHS = h_t + speed; %calculate RHS for comparison to h_0
-        P_new = P_new - 1000; %change P for next iteration
+        %P_new = P_new - 1000; %change P for next iteration
+        P_new = P_new - ((RHS - h_0(i)) + 100); % does the same thing but almost three times faster overall
     end
     
     Tt_reacted(i) = temperature(gas); %store temps while gas is at throat P and T
@@ -112,13 +116,43 @@ plot(phi, T0, 'g', phi, Tt_frozen, 'b-.', phi, Tt_reacted, 'b', phi, Te_frozen, 
 title('Temperatures Across Nozzle (Inlet, Throat, Exit)');
 xlabel('Mixture Ratio');
 ylabel('Temperature [K]');
-legend('Inlet, Stagnation Temperature', 'Throat Frozen', 'Throat Reacted', 'Exit Frozen', 'Exit Reacted');
+
+legend('Stagnation Temperature', 'Throat Frozen', 'Throat Reacted', 'Exit Frozen', 'Exit Reacted');
+% figure(10);
+% plot(phi, T0, phi, Tt_reacted, phi, Te_reacted, 'Linewidth', 1.2);
+% title('Reacted Case');
+% xlabel('Mixture Ratio');
+% ylabel('Temperature [K]');
+% legend('Stagnation Temperature', 'Nozzle Throat Temperature', 'Exit Temperature');
+
+
+%C* data calculations
+load('fire1.mat');
+P0_avg = 1000000;
+A_t = 0.0001824; % m^2 (from Piazza)
+delta_t = (final_index-start_index)/sampleRate; % seconds
+m_dot_fuel = (mfuel/1000)/delta_t; % kg/s
+m_dot_oxidizer = m_O2/delta_t; % kg/s
+m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
+ 
+phi_test = m_dot_oxidizer/m_dot_fuel;
+cstar_test = P0_avg*A_t/m_dot_total;
+
+
+
 figure(2)
-plot(phi, c_frozen, phi, c_reacted, 'Linewidth', 1.2);
+plot(phi, c_frozen, phi, c_reacted, phi_test, cstar_test, '*','Linewidth', 1.2);
 xlabel('Mixture Ratio');
 ylabel('C* (m/s)');
 title('C* vs Mixture Ratio');
-legend('Frozen', 'Reacted');
+
+legend('Frozen', 'Reacted', 'Measured C*', 'Location', 'NorthWest');
+% figure(3)
+% plot(phi, Ut, phi, Ut_reacted, 'Linewidth', 1.2);
+% xlabel('Mixture Ratio');
+% ylabel('Throat Velocity (m/s)');
+% legend('Frozen', 'Reacted');
+% title('Throat Velocity');
 figure(6)
 plot(phi, Ue, phi, Ue_reacted, 'Linewidth', 1.2);
 xlabel('Mixture Ratio');
@@ -151,4 +185,4 @@ legend('H', 'H2', 'O', 'O2', 'OH', 'C', 'CO', 'CO2', 'H2O', 'C2H4');
 title('Mole Fractions of Reacted Nozzle');
 plotfixer
 %3740 --> temperature that T0 graph should peak at 
-
+toc
