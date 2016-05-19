@@ -1,12 +1,12 @@
 clear all;
 close all;
+N = 50; 
 
-[CA, SA, mdot_f, ringD, centerD] = circleAreaFun();
-NUM_RING_HOLES = 8;
+[CA, SA, mdot_O2, mdot_f, ringD, centerD, NUM_RING_HOLES, t_f] = circleAreaFun(N);
+tstep = t_f / N;
 IN_TO_M = .0254;
-R = .018; %m radius of outer ring. how far from the center of the grain does the circle of ring holes lie
+R = .018; %m radius of outer ring. .018 works well. how far from the center of the grain does the circle of ring holes lie
 OR = 1.995/2 * IN_TO_M; %outer radius of fuel grain
-N = 100; 
 
 figure(1)
 for i = 1:length(centerD)
@@ -27,5 +27,10 @@ for i = 1:length(centerD)
 %     axis([-OR OR -OR OR])
     axis tight
     hold off
-    pause(.01);
+    pause(.0001); 
 end
+
+phi = mdot_O2 ./ mdot_f;
+figure(2)
+plot(linspace(0,t_f, N), phi)
+title('Mixture Ratio')
