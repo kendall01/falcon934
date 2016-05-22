@@ -5,10 +5,10 @@ close all;
 N = 100;
 
 %Run calculations for burn rate
-[~, ~, mdot_O2, mdot_f, ringD, centerD, numHoles, t_f] = doubleCircleAreaFun(N);
+[~, ~, mdot_O2, mdot_f, iRingD, oRingD, centerD, numHoles, t_f] = doubleCircleAreaFun(N);
 
 %Simulate Burn
-simulateDouble(ringD, centerD, numHoles, N);
+simulateDouble(iRingD, oRingD, centerD, numHoles, N);
 
 %Calculate Mixture Ratio
 phi = mdot_O2 ./ mdot_f;
