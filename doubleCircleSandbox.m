@@ -3,7 +3,7 @@ close all;
 
 %Number of steps
 N = 100;
-M = 1;
+M = 1000;
 
 %Run calculations for burn rate
 [CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, numHoles, t_f] = doubleCircleAreaFun(N, M);
