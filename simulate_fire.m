@@ -2,7 +2,8 @@ clear all;
 close all;
 
 N=100;
-[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N);
+M=1000;
+[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N, M);
 t_step = t_f/N;
 m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
 
