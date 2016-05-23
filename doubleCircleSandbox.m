@@ -3,14 +3,14 @@ close all;
 
 %Number of steps
 N = 100;
-M = 1000;
+M = 1;
 
 %Run calculations for burn rate
 [CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, numHoles, t_f] = doubleCircleAreaFun(N, M);
 %[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerW, centerH, ringHoles, t_f] = doubleCircleLineAreaFun(N);
 
 %Simulate Burn
-%simulateDouble(iRingD, oRingD, centerD, numHoles, N);
+%simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
 
 %Calculate Mixture Ratio
 phi = mdot_O2 ./ mdot_f;
