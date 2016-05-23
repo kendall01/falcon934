@@ -1,6 +1,7 @@
-function [CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, ringHoles, t_f] = doubleCircleAreaFun(N)
+function [CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, ringHoles, t_f] = doubleCircleAreaFun(N, M)
 
 IN_TO_M = .0254;
+G_TO_KG = 1000;
 
 %Constants to play with:
 O_RING_HOLES = 13; %num holes making up the outer ring of holes
@@ -22,36 +23,77 @@ mdot_O2_fin = 0.06; %from lab 1 fire. Assuming linear.
 
 t_f = m_O2 / mean([mdot_O2_init, mdot_O2_fin]); %number of seconds to run burn.
 tstep = t_f/N;
-mdot_O2 = linspace(mdot_O2_init,mdot_O2_fin, N)'; %assuming linear
+lstep = LENGTH / M;
+
+MM_c2h4 = (2 * 12 + 4 * 1) / G_TO_KG; %[kg/mol]
+MM_o2 = (32) / G_TO_KG; %[kg/mol]
+stoich_O2 = 3; %C2H4 + 3O2 -> 2 CO2 + 2 H2O
 
 %Runs for time = 3.4 seconds on every run.
 
 %initialize vectors
-iRingD = zeros(N,1);oRingD = zeros(N,1);centerD = zeros(N,1);CA = zeros(N,1);SA = zeros(N,1);r = zeros(N,1);mdot_f = zeros(N,1);
+moldot_f = zeros(N,M);mdot_O2 = zeros(N,M);iRingD = zeros(N,M);oRingD = zeros(N,M);centerD = zeros(N,M);CA = zeros(N,M);SA = zeros(N,M);r = zeros(N,M);mdot_f = zeros(N,M);
 
 %set initial conditions
-iRingD(1) = I_RING_DIA;
-oRingD(1) = O_RING_DIA;
-centerD(1) = CENTER_DIA;
+iRingD(1,:) = I_RING_DIA;
+oRingD(1,:) = O_RING_DIA;
+centerD(1,:) = CENTER_DIA;
+mdot_O2(:,1) = linspace(mdot_O2_init,mdot_O2_fin, N)'; %assuming linear
 
-for i = 1:N-1;
-    CA(i) = (I_RING_HOLES * iRingD(i)^2 + O_RING_HOLES * oRingD(i)^2) * pi / 4 + pi * centerD(i)^2 / 4; %Calculate cross sectional area at current step
-    SA(i) = ((I_RING_HOLES * iRingD(i) + O_RING_HOLES * oRingD(i)) * pi  + pi * centerD(i)) * LENGTH; %Calculate surface area at current step
-    r(i) = (a * (mdot_O2(i) / CA(i) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
-    mdot_f(i) = SA(i) * r(i) * RHO_HDPE; %[kg/s]
+for i = 1:N-1
+    for j = 1:M-1
+        CA(i, j) = (I_RING_HOLES * iRingD(i,j)^2 + O_RING_HOLES * oRingD(i,j)^2) * pi / 4 + pi * centerD(i,j)^2 / 4; %Calculate cross sectional area at current step
+        SA(i,j) = ((I_RING_HOLES * iRingD(i,j) + O_RING_HOLES * oRingD(i,j)) * pi  + pi * centerD(i,j)) * lstep; %Calculate surface area at current step
+        r(i,j) = (a * (mdot_O2(i,j) / CA(i,j) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
+        mdot_f(i,j) = SA(i,j) * r(i,j) * RHO_HDPE; %[kg/s] per length_step
+        moldot_f(i,j) = mdot_f(i,j)/MM_c2h4;
+        
+        %increment
+        iRingD(i+1,j) = iRingD(i,j) + 2 * r(i,j) * tstep;
+        oRingD(i+1,j) = oRingD(i,j) + 2 * r(i,j) * tstep;
+        centerD(i+1,j) = centerD(i,j) + 2 * r(i,j) * tstep;
+        mdot_O2(i,j+1) = mdot_O2(i,j) - (stoich_O2*moldot_f(i,j)) * MM_o2;
+    end
+    j = M;
+    CA(i, j) = (I_RING_HOLES * iRingD(i,j)^2 + O_RING_HOLES * oRingD(i,j)^2) * pi / 4 + pi * centerD(i,j)^2 / 4; %Calculate cross sectional area at current step
+    SA(i,j) = ((I_RING_HOLES * iRingD(i,j) + O_RING_HOLES * oRingD(i,j)) * pi  + pi * centerD(i,j)) * lstep; %Calculate surface area at current step
+    r(i,j) = (a * (mdot_O2(i,j) / CA(i,j) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
+    mdot_f(i,j) = SA(i,j) * r(i,j) * RHO_HDPE; %[kg/s] per length_step
+    moldot_f(i,j) = mdot_f(i,j)/MM_c2h4;
     
     %increment
-    iRingD(i+1) = iRingD(i) + 2 * r(i) * tstep;
-    oRingD(i+1) = oRingD(i) + 2 * r(i) * tstep;
-    centerD(i+1) = centerD(i) + 2 * r(i) * tstep;
+    iRingD(i+1,j) = iRingD(i,j) + 2 * r(i,j) * tstep;
+    oRingD(i+1,j) = oRingD(i,j) + 2 * r(i,j) * tstep;
+    centerD(i+1,j) = centerD(i,j) + 2 * r(i,j) * tstep;
 end
 % start fence post (loop only runs N-1 iterations, this runs the Nth iteration)
 i = N;
-CA(i) = (I_RING_HOLES * iRingD(i)^2 + O_RING_HOLES * oRingD(i)^2) * pi / 4 + pi * centerD(i)^2 / 4; %Calculate cross sectional area at current step
-SA(i) = ((I_RING_HOLES * iRingD(i) + O_RING_HOLES * oRingD(i)) * pi  + pi * centerD(i)) * LENGTH; %Calculate surface area at current step
-r(i) = (a * (mdot_O2(i) / CA(i) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
-mdot_f(i) = SA(i) * r(i) * RHO_HDPE; %[kg/s]
+for j = 1:M-1
+    CA(i, j) = (I_RING_HOLES * iRingD(i,j)^2 + O_RING_HOLES * oRingD(i,j)^2) * pi / 4 + pi * centerD(i,j)^2 / 4; %Calculate cross sectional area at current step
+    SA(i,j) = ((I_RING_HOLES * iRingD(i,j) + O_RING_HOLES * oRingD(i,j)) * pi  + pi * centerD(i,j)) * lstep; %Calculate surface area at current step
+    r(i,j) = (a * (mdot_O2(i,j) / CA(i,j) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
+    mdot_f(i,j) = SA(i,j) * r(i,j) * RHO_HDPE; %[kg/s] per length_step
+    moldot_f(i,j) = mdot_f(i,j)/MM_c2h4;
+    
+    %increment
+    iRingD(i+1,j) = iRingD(i,j) + 2 * r(i,j) * tstep;
+    oRingD(i+1,j) = oRingD(i,j) + 2 * r(i,j) * tstep;
+    centerD(i+1,j) = centerD(i,j) + 2 * r(i,j) * tstep;
+    mdot_O2(i,j+1) = mdot_O2(i,j) - (stoich_O2*moldot_f(i,j)) * MM_o2;
+end
+j = M;
+CA(i, j) = (I_RING_HOLES * iRingD(i,j)^2 + O_RING_HOLES * oRingD(i,j)^2) * pi / 4 + pi * centerD(i,j)^2 / 4; %Calculate cross sectional area at current step
+SA(i,j) = ((I_RING_HOLES * iRingD(i,j) + O_RING_HOLES * oRingD(i,j)) * pi  + pi * centerD(i,j)) * lstep; %Calculate surface area at current step
+r(i,j) = (a * (mdot_O2(i,j) / CA(i,j) / UNITS) ^ n) / MM_TO_M; % m/s  Burn rate
+mdot_f(i,j) = SA(i,j) * r(i,j) * RHO_HDPE; %[kg/s] per length_step
+
+%increment
+iRingD(i+1,j) = iRingD(i,j) + 2 * r(i,j) * tstep;
+oRingD(i+1,j) = oRingD(i,j) + 2 * r(i,j) * tstep;
+centerD(i+1,j) = centerD(i,j) + 2 * r(i,j) * tstep;
 % end fence post
 
 %fill output variables
+mdot_f = sum(mdot_f, 2);
+mdot_O2 = mdot_O2(:,1);
 ringHoles = [I_RING_HOLES, O_RING_HOLES];
