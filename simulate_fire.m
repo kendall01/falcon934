@@ -3,7 +3,7 @@ close all;
 
 N=100;
 M=100;
-[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N, M);
+[~, ~, m_dot_oxidizer, m_dot_fuel,iRingD, oRingD, centerD, ~, t_f] = doubleCircleAreaFun(N, M);
 t_step = t_f/N;
 m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
 
@@ -59,9 +59,18 @@ parfor i = 1:length(phi)
     c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
     rho1(i) = density(gas);
     
-    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i);
+    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
     dia_t(i) = sqrt(A_t(i) / pi)*2;
-
+    
+%     %calcs for TA nozzle
+%     A_t(i) = pi * .684^2/4; %TA nozzle
+%     A_e(i) = pi * 1.73^2 /4; 
+%     k = 1.4;
+% %     A_ratio = A_e(i)/A_t(i);
+% %     syms Ma
+%     Ma = 1;
+%     P_e = Po *  (1 + (k - 1)/2 * Ma ^2 ) ^ (-k/(k - 1));
+P_e = P_new/1.5;
     % Reacted exit
     set(gas,'P',P_e,'S',S1);
     Te_reacted(i) = temperature(gas);
@@ -69,9 +78,10 @@ parfor i = 1:length(phi)
     h_e_reacted(i) = enthalpy_mass(gas);
     Ue_reacted(i) = sqrt(2*(h_0(i)- h_e_reacted(i)));
     A_ratio_reacted(i) = rho1(i)*Ut_reacted(i)/(rho2(i)*Ue_reacted(i));
-    Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
+    %Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
+    Cf_reacted(i) = Ue_reacted(i)/c_reacted(i); % for TA nozzle
     reacted_mole_fracs(:,i) = moleFractions(gas);
-    A_e(i) = A_t(i) * A_ratio_reacted(i);
+    A_e(i) = A_t(i) * A_ratio_reacted(i); 
     dia_e(i) = sqrt(A_e(i) / pi)*2;
 end
 g = 9.81; % m/s^2
