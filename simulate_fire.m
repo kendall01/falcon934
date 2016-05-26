@@ -2,7 +2,8 @@ clear all;
 close all;
 
 N=100;
-[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N);
+M=100;
+[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N, M);
 t_step = t_f/N;
 m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
 
@@ -25,7 +26,7 @@ Ut_reacted = zeros(length(phi),1);
 Ue_reacted = zeros(length(phi),1);
 reacted_mole_fracs = zeros(12,length(phi));
 
-Po = 1e6; % Pa (68 bar)
+Po = 1172110; % Pa (68 bar)
 P_e = 101325; %Pa
 
 %parfor runs this loop in parallel. It only works on 2016a with the
@@ -58,6 +59,9 @@ parfor i = 1:length(phi)
     c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
     rho1(i) = density(gas);
     
+    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i);
+    dia_t(i) = sqrt(A_t(i) / pi)*2;
+
     % Reacted exit
     set(gas,'P',P_e,'S',S1);
     Te_reacted(i) = temperature(gas);
@@ -67,11 +71,20 @@ parfor i = 1:length(phi)
     A_ratio_reacted(i) = rho1(i)*Ut_reacted(i)/(rho2(i)*Ue_reacted(i));
     Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
     reacted_mole_fracs(:,i) = moleFractions(gas);
+    A_e(i) = A_t(i) * A_ratio_reacted(i);
+    dia_e(i) = sqrt(A_e(i) / pi)*2;
 end
 g = 9.81; % m/s^2
 I_sp = c_reacted.*Cf_reacted/g;
 times = t_step*(1:length(I_sp));
 
+figure(1)
+plot(times, phi)
+xlabel('Time')
+ylabel('Phi')
+title('Mixture Ratio')
+
+figure(2)
 plot(times,I_sp)
 xlabel('time (s)')
 ylabel('I (specific impulse)');
