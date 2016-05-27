@@ -10,7 +10,7 @@ M = 100;
 %[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerW, centerH, ringHoles, t_f] = doubleCircleLineAreaFun(N);
 
 %Simulate Burn
-%simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
+simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
 
 %Calculate Mixture Ratio
 phi = mdot_O2 ./ mdot_f;

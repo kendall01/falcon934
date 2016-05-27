@@ -26,7 +26,7 @@ Ut_reacted = zeros(length(phi),1);
 Ue_reacted = zeros(length(phi),1);
 reacted_mole_fracs = zeros(12,length(phi));
 
-Po = 1172110; % Pa (68 bar)
+Po = 1172110; % Pa (170psi)
 P_e = 101325; %Pa
 
 %parfor runs this loop in parallel. It only works on 2016a with the
@@ -43,6 +43,7 @@ parfor i = 1:length(phi)
     h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
     RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
+    rho0(i) = density(gas); %density of gas at entrance to nozzle
     
     while h_0(i) < RHS
         set(gas,'P',P_new,'S',S1); %should keep all same, but set gas to a new pressure
@@ -54,23 +55,21 @@ parfor i = 1:length(phi)
         P_new = P_new - ((RHS - h_0(i)) + 100); % does the same thing but almost three times faster overall
     end
     
+    rho1(i) = density(gas);%rho1 is at throat
     Tt_reacted(i) = temperature(gas); %store temps while gas is at throat P and T
     Ut_reacted(i) = soundspeed(gas); %velocity at throat
-    c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
-    rho1(i) = density(gas);
+    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
+    dia_t(i) = sqrt(A_t(i) / pi)*2;
+    c_reacted(i)= Po/(rho1(i)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
+    c_star(i) = Po * A_t(i) / m_dot_total(i);
     
     A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
     dia_t(i) = sqrt(A_t(i) / pi)*2;
     
-%     %calcs for TA nozzle
-%     A_t(i) = pi * .684^2/4; %TA nozzle
-%     A_e(i) = pi * 1.73^2 /4; 
-%     k = 1.4;
-% %     A_ratio = A_e(i)/A_t(i);
-% %     syms Ma
-%     Ma = 1;
-%     P_e = Po *  (1 + (k - 1)/2 * Ma ^2 ) ^ (-k/(k - 1));
-P_e = P_new/1.5;
+
+%P_e = P_new; %For TA nozzle
+
+
     % Reacted exit
     set(gas,'P',P_e,'S',S1);
     Te_reacted(i) = temperature(gas);
@@ -78,8 +77,7 @@ P_e = P_new/1.5;
     h_e_reacted(i) = enthalpy_mass(gas);
     Ue_reacted(i) = sqrt(2*(h_0(i)- h_e_reacted(i)));
     A_ratio_reacted(i) = rho1(i)*Ut_reacted(i)/(rho2(i)*Ue_reacted(i));
-    %Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
-    Cf_reacted(i) = Ue_reacted(i)/c_reacted(i); % for TA nozzle
+    Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
     reacted_mole_fracs(:,i) = moleFractions(gas);
     A_e(i) = A_t(i) * A_ratio_reacted(i); 
     dia_e(i) = sqrt(A_e(i) / pi)*2;
