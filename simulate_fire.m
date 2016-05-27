@@ -37,13 +37,20 @@ P_e = 101325; %Pa
 parfor i = 1:length(phi)
     i
     [T0(i), gas, y_r] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
+    
+    
+    
+%     
+%     
+    h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
+    P_new = pressure(gas); %P_new defined here but will change immediately in loop
     S1 = entropy_mass(gas); %define original entropy (mass specific since setState_SP uses that) to reference bc nozzle is isentropic
     
-    % Now find Reacted Gas Throat conditions
+    set(gas,'P',Po,'S',S1,'Y',y_r); %must reset to original gas compostion
+    equilibrate(gas,'SP'); %making sure the gas is reset (may be uneccesary, idk)
     h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
     RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
-    rho0(i) = density(gas); %density of gas at entrance to nozzle
     
     while h_0(i) < RHS
         set(gas,'P',P_new,'S',S1); %should keep all same, but set gas to a new pressure
@@ -55,13 +62,16 @@ parfor i = 1:length(phi)
         P_new = P_new - ((RHS - h_0(i)) + 100); % does the same thing but almost three times faster overall
     end
     
-    rho1(i) = density(gas);%rho1 is at throat
     Tt_reacted(i) = temperature(gas); %store temps while gas is at throat P and T
     Ut_reacted(i) = soundspeed(gas); %velocity at throat
-    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
-    dia_t(i) = sqrt(A_t(i) / pi)*2;
-    c_reacted(i)= Po/(rho1(i)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
-    c_star(i) = Po * A_t(i) / m_dot_total(i);
+    c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
+    
+    
+    
+    
+    
+    
+    
     
     A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
     dia_t(i) = sqrt(A_t(i) / pi)*2;
