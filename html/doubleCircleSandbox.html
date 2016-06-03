@@ -1,0 +1,749 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>doubleCircleSandbox</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-06-02"><meta name="DC.source" content="doubleCircleSandbox.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+
+<span class="comment">%Number of steps</span>
+N = 100;
+M = 100;
+
+<span class="comment">%Run calculations for burn rate</span>
+[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, numHoles, t_f] = doubleCircleAreaFun(N, M);
+<span class="comment">%[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerW, centerH, ringHoles, t_f] = doubleCircleLineAreaFun(N);</span>
+
+<span class="comment">%Simulate Burn</span>
+<span class="comment">%simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);</span>
+
+<span class="comment">%Calculate Mixture Ratio</span>
+phi = mdot_O2 ./ mdot_f;
+figure(2)
+plot(linspace(0,t_f, N), phi)
+title(<span class="string">'Mixture Ratio'</span>)
+xlabel(<span class="string">'Burn Time [s]'</span>)
+ylabel(<span class="string">'Mixture Ratio'</span>)
+
+
+centerD = centerD ./ .0254;
+iRingD = iRingD ./ .0254;
+oRingD = oRingD ./ .0254;
+IR = .0115/.0254;
+OR = .019/.0254;
+l = linspace(0, 7.375, 99)';
+FigHandle = figure(3);
+set(FigHandle, <span class="string">'Position'</span>, [100, 100, 1049, 300]);
+
+<span class="keyword">for</span> i = 1:size(centerD,1)
+plot(l, centerD(i,1:M-1)'/2, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2)
+axis <span class="string">manual</span>
+axis <span class="string">equal</span>
+axis([0 7.375 -.9975 .9975])
+xlabel(<span class="string">'Length along grain [in]'</span>)
+ylabel(<span class="string">'Distance from Centerline [in]'</span>)
+title(<span class="string">'Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'</span>)
+hold <span class="string">on</span>
+plot(l, -centerD(i,1:M-1)'/2, <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, (iRingD(i,1:M-1)'/2)+IR, <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, (-iRingD(i,1:M-1)'/2)+IR, <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, -((iRingD(i,1:M-1)'/2)+IR), <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, -((-iRingD(i,1:M-1)'/2)+IR), <span class="string">'b'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, (oRingD(i,1:M-1)'/2)+OR, <span class="string">'g'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, (-oRingD(i,1:M-1)'/2)+OR, <span class="string">'g'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, -((oRingD(i,1:M-1)'/2)+OR), <span class="string">'g'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">on</span>
+plot(l, -((-oRingD(i,1:M-1)'/2)+OR), <span class="string">'g'</span>, <span class="string">'LineWidth'</span>, 2)
+hold <span class="string">off</span>
+pause(0.03)
+<span class="keyword">end</span>
+
+pause(1)
+
+IR = .008/.0254;
+OR = .019/.0254;
+iRingDrl = [.34, .325];
+oRingDrl = [.257, .23];
+FigHandle4 = figure(4);
+set(FigHandle4, <span class="string">'Position'</span>, [100, 100, 1049, 300]);
+<span class="comment">%plot(l([1,end]), centerD(i,[1,M-1])'/2, 'm')</span>
+axis <span class="string">manual</span>; axis <span class="string">equal</span>; axis([0 7.375 0 .9975]); xlabel(<span class="string">'Length along grain [in]'</span>); ylabel(<span class="string">'Distance from Centerline [in]'</span>); title(<span class="string">'Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'</span>); hold <span class="string">on</span>;
+<span class="comment">%plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;</span>
+plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+axis <span class="string">manual</span>; axis <span class="string">equal</span>; axis([0 7.375 0 .9975]); xlabel(<span class="string">'Length along grain [in]'</span>); ylabel(<span class="string">'Distance from Centerline [in]'</span>); title(<span class="string">'Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'</span>); hold <span class="string">on</span>;
+plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;</span>
+plot(l([1,end]), (		oRingDrl'/2)	+OR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;</span>
+plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;</span>
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'g'</span>); hold <span class="string">on</span>;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'g'</span>); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')</span>
+hold <span class="string">off</span>
+</pre><pre class="codeoutput">
+i =
+
+     1
+
+
+i =
+
+     2
+
+
+i =
+
+     3
+
+
+i =
+
+     4
+
+
+i =
+
+     5
+
+
+i =
+
+     6
+
+
+i =
+
+     7
+
+
+i =
+
+     8
+
+
+i =
+
+     9
+
+
+i =
+
+    10
+
+
+i =
+
+    11
+
+
+i =
+
+    12
+
+
+i =
+
+    13
+
+
+i =
+
+    14
+
+
+i =
+
+    15
+
+
+i =
+
+    16
+
+
+i =
+
+    17
+
+
+i =
+
+    18
+
+
+i =
+
+    19
+
+
+i =
+
+    20
+
+
+i =
+
+    21
+
+
+i =
+
+    22
+
+
+i =
+
+    23
+
+
+i =
+
+    24
+
+
+i =
+
+    25
+
+
+i =
+
+    26
+
+
+i =
+
+    27
+
+
+i =
+
+    28
+
+
+i =
+
+    29
+
+
+i =
+
+    30
+
+
+i =
+
+    31
+
+
+i =
+
+    32
+
+
+i =
+
+    33
+
+
+i =
+
+    34
+
+
+i =
+
+    35
+
+
+i =
+
+    36
+
+
+i =
+
+    37
+
+
+i =
+
+    38
+
+
+i =
+
+    39
+
+
+i =
+
+    40
+
+
+i =
+
+    41
+
+
+i =
+
+    42
+
+
+i =
+
+    43
+
+
+i =
+
+    44
+
+
+i =
+
+    45
+
+
+i =
+
+    46
+
+
+i =
+
+    47
+
+
+i =
+
+    48
+
+
+i =
+
+    49
+
+
+i =
+
+    50
+
+
+i =
+
+    51
+
+
+i =
+
+    52
+
+
+i =
+
+    53
+
+
+i =
+
+    54
+
+
+i =
+
+    55
+
+
+i =
+
+    56
+
+
+i =
+
+    57
+
+
+i =
+
+    58
+
+
+i =
+
+    59
+
+
+i =
+
+    60
+
+
+i =
+
+    61
+
+
+i =
+
+    62
+
+
+i =
+
+    63
+
+
+i =
+
+    64
+
+
+i =
+
+    65
+
+
+i =
+
+    66
+
+
+i =
+
+    67
+
+
+i =
+
+    68
+
+
+i =
+
+    69
+
+
+i =
+
+    70
+
+
+i =
+
+    71
+
+
+i =
+
+    72
+
+
+i =
+
+    73
+
+
+i =
+
+    74
+
+
+i =
+
+    75
+
+
+i =
+
+    76
+
+
+i =
+
+    77
+
+
+i =
+
+    78
+
+
+i =
+
+    79
+
+
+i =
+
+    80
+
+
+i =
+
+    81
+
+
+i =
+
+    82
+
+
+i =
+
+    83
+
+
+i =
+
+    84
+
+
+i =
+
+    85
+
+
+i =
+
+    86
+
+
+i =
+
+    87
+
+
+i =
+
+    88
+
+
+i =
+
+    89
+
+
+i =
+
+    90
+
+
+i =
+
+    91
+
+
+i =
+
+    92
+
+
+i =
+
+    93
+
+
+i =
+
+    94
+
+
+i =
+
+    95
+
+
+i =
+
+    96
+
+
+i =
+
+    97
+
+
+i =
+
+    98
+
+
+i =
+
+    99
+
+</pre><img vspace="5" hspace="5" src="doubleCircleSandbox_01.png" style="width:560px;height:420px;" alt=""> <img vspace="5" hspace="5" src="doubleCircleSandbox_02.png" style="width:1049px;height:300px;" alt=""> <img vspace="5" hspace="5" src="doubleCircleSandbox_03.png" style="width:1049px;height:300px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear all;
+close all;
+
+%Number of steps
+N = 100;
+M = 100;
+
+%Run calculations for burn rate
+[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerD, numHoles, t_f] = doubleCircleAreaFun(N, M);
+%[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerW, centerH, ringHoles, t_f] = doubleCircleLineAreaFun(N);
+
+%Simulate Burn
+%simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
+
+%Calculate Mixture Ratio
+phi = mdot_O2 ./ mdot_f;
+figure(2)
+plot(linspace(0,t_f, N), phi)
+title('Mixture Ratio')
+xlabel('Burn Time [s]')
+ylabel('Mixture Ratio')
+
+
+centerD = centerD ./ .0254;
+iRingD = iRingD ./ .0254;
+oRingD = oRingD ./ .0254;
+IR = .0115/.0254;
+OR = .019/.0254;
+l = linspace(0, 7.375, 99)';
+FigHandle = figure(3);
+set(FigHandle, 'Position', [100, 100, 1049, 300]);
+
+for i = 1:size(centerD,1)
+plot(l, centerD(i,1:M-1)'/2, 'r', 'LineWidth', 2)
+axis manual
+axis equal
+axis([0 7.375 -.9975 .9975])
+xlabel('Length along grain [in]')
+ylabel('Distance from Centerline [in]')
+title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn')
+hold on
+plot(l, -centerD(i,1:M-1)'/2, 'r', 'LineWidth', 2)
+hold on
+plot(l, (iRingD(i,1:M-1)'/2)+IR, 'b', 'LineWidth', 2)
+hold on
+plot(l, (-iRingD(i,1:M-1)'/2)+IR, 'b', 'LineWidth', 2)
+hold on
+plot(l, -((iRingD(i,1:M-1)'/2)+IR), 'b', 'LineWidth', 2)
+hold on
+plot(l, -((-iRingD(i,1:M-1)'/2)+IR), 'b', 'LineWidth', 2)
+hold on
+plot(l, (oRingD(i,1:M-1)'/2)+OR, 'g', 'LineWidth', 2)
+hold on
+plot(l, (-oRingD(i,1:M-1)'/2)+OR, 'g', 'LineWidth', 2)
+hold on
+plot(l, -((oRingD(i,1:M-1)'/2)+OR), 'g', 'LineWidth', 2)
+hold on
+plot(l, -((-oRingD(i,1:M-1)'/2)+OR), 'g', 'LineWidth', 2)
+hold off
+pause(0.03)
+end
+
+pause(1)
+
+IR = .008/.0254;
+OR = .019/.0254;
+iRingDrl = [.34, .325];
+oRingDrl = [.257, .23];
+FigHandle4 = figure(4);
+set(FigHandle4, 'Position', [100, 100, 1049, 300]);
+%plot(l([1,end]), centerD(i,[1,M-1])'/2, 'm')
+axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
+%plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;
+plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
+plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]), (		oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
+% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
+% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
+% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;
+% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')
+hold off
+##### SOURCE END #####
+--></body></html>

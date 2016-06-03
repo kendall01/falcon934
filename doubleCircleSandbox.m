@@ -20,5 +20,72 @@ title('Mixture Ratio')
 xlabel('Burn Time [s]')
 ylabel('Mixture Ratio')
 
-figure(3)
-plot(1:M-1, centerD(:,1:M-1)')
+
+centerD = centerD ./ .0254;
+iRingD = iRingD ./ .0254;
+oRingD = oRingD ./ .0254;
+IR = .0115/.0254;
+OR = .019/.0254;
+l = linspace(0, 7.375, 99)';
+FigHandle = figure(3);
+set(FigHandle, 'Position', [100, 100, 1049, 300]);
+
+for i = 1:size(centerD,1)
+plot(l, centerD(i,1:M-1)'/2, 'r', 'LineWidth', 2)
+axis manual
+axis equal
+axis([0 7.375 -.9975 .9975])
+xlabel('Length along grain [in]')
+ylabel('Distance from Centerline [in]')
+title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn')
+hold on
+plot(l, -centerD(i,1:M-1)'/2, 'r', 'LineWidth', 2)
+hold on
+plot(l, (iRingD(i,1:M-1)'/2)+IR, 'b', 'LineWidth', 2)
+hold on
+plot(l, (-iRingD(i,1:M-1)'/2)+IR, 'b', 'LineWidth', 2)
+hold on
+plot(l, -((iRingD(i,1:M-1)'/2)+IR), 'b', 'LineWidth', 2)
+hold on
+plot(l, -((-iRingD(i,1:M-1)'/2)+IR), 'b', 'LineWidth', 2)
+hold on
+plot(l, (oRingD(i,1:M-1)'/2)+OR, 'g', 'LineWidth', 2)
+hold on
+plot(l, (-oRingD(i,1:M-1)'/2)+OR, 'g', 'LineWidth', 2)
+hold on
+plot(l, -((oRingD(i,1:M-1)'/2)+OR), 'g', 'LineWidth', 2)
+hold on
+plot(l, -((-oRingD(i,1:M-1)'/2)+OR), 'g', 'LineWidth', 2)
+hold off
+pause(0.03)
+end
+
+pause(1)
+
+IR = .008/.0254;
+OR = .019/.0254;
+iRingDrl = [.34, .325];
+oRingDrl = [.257, .23];
+FigHandle4 = figure(4);
+set(FigHandle4, 'Position', [100, 100, 1049, 300]);
+%plot(l([1,end]), centerD(i,[1,M-1])'/2, 'm')
+axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
+%plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;
+plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
+plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]), (		oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
+plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
+% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
+% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
+% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;
+% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')
+hold off
