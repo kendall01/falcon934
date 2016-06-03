@@ -4,11 +4,11 @@ IN_TO_M = .0254;
 G_TO_KG = 1000;
 
 %Constants to play with:
-O_RING_HOLES = 13; %num holes making up the outer ring of holes
-I_RING_HOLES = 7; %num holes making up the inner ring of holes
+O_RING_HOLES = 16; %num holes making up the outer ring of holes
+I_RING_HOLES = 9; %num holes making up the inner ring of holes
 CENTER_DIA = 15/32 * IN_TO_M; % Diameter of the hole in the center
-I_RING_DIA = 7/32 * IN_TO_M; %initial diameter of  holes in inner ring, in meters
-O_RING_DIA = 5/32 * IN_TO_M; %initial diameter of  holes in outer ring, in meters
+I_RING_DIA = 9/64 * IN_TO_M; %initial diameter of  holes in inner ring, in meters
+O_RING_DIA = 4/32 * IN_TO_M; %initial diameter of  holes in outer ring, in meters
 
 LENGTH = 7.375 * IN_TO_M;
 RING_HOLES = O_RING_HOLES + I_RING_HOLES;
