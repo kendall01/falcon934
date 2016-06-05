@@ -3,7 +3,7 @@ close all;
 
 N=100;
 M=100;
-[~, ~, m_dot_oxidizer, m_dot_fuel, ~, ~, ~, ~, t_f] = doubleCircleAreaFun(N, M);
+[~, ~, m_dot_oxidizer, m_dot_fuel,iRingD, oRingD, centerD, ~, t_f] = doubleCircleAreaFun(N, M);
 t_step = t_f/N;
 m_dot_total = m_dot_fuel+m_dot_oxidizer; % kg/s
 
@@ -26,7 +26,7 @@ Ut_reacted = zeros(length(phi),1);
 Ue_reacted = zeros(length(phi),1);
 reacted_mole_fracs = zeros(12,length(phi));
 
-Po = 1172110; % Pa (68 bar)
+Po = 1172110; % Pa (170psi)
 P_e = 101325; %Pa
 
 %parfor runs this loop in parallel. It only works on 2016a with the
@@ -37,9 +37,12 @@ P_e = 101325; %Pa
 parfor i = 1:length(phi)
     i
     [T0(i), gas, y_r] = combustion(phi(i)); %T0, gas must be returned in combustion ([T0(i),gas]= combustion(phi))
+   
+    h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
     S1 = entropy_mass(gas); %define original entropy (mass specific since setState_SP uses that) to reference bc nozzle is isentropic
     
-    % Now find Reacted Gas Throat conditions
+    set(gas,'P',Po,'S',S1,'Y',y_r); %must reset to original gas compostion
+    equilibrate(gas,'SP'); %making sure the gas is reset (may be uneccesary, idk)
     h_0(i) = enthalpy_mass(gas); %define original enthalpy to compare
     RHS = h_0(i) + 100; %start RHS at arbitrary value, anything greater than h_0 which is NOT ALWAYS negative
     P_new = pressure(gas); %P_new defined here but will change immediately in loop
@@ -56,12 +59,22 @@ parfor i = 1:length(phi)
     
     Tt_reacted(i) = temperature(gas); %store temps while gas is at throat P and T
     Ut_reacted(i) = soundspeed(gas); %velocity at throat
-    c_reacted(i)= Po/(density(gas)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
-    rho1(i) = density(gas);
+    rho1(i) = density(gas); %density at throat
+    c_reacted(i)= Po/(rho1(i)*Ut_reacted(i));  %c*= P0/(rho*Ut) dependent on new gas mixture (beginning of nozzle not throat) at each mix ratio
     
-    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i);
+    
+    
+    A_t(i) = m_dot_total(i) / rho1(i) / Ut_reacted(i); %Ideal nozzle
     dia_t(i) = sqrt(A_t(i) / pi)*2;
+    
+%     %For TA nozzle
+%     P_e = P_new;
+%     Cf_reacted(i) = Ut_reacted(i)/c_reacted(i);
 
+    %new throat = .649
+    %new exit = 0.9178
+    
+    
     % Reacted exit
     set(gas,'P',P_e,'S',S1);
     Te_reacted(i) = temperature(gas);
@@ -70,8 +83,9 @@ parfor i = 1:length(phi)
     Ue_reacted(i) = sqrt(2*(h_0(i)- h_e_reacted(i)));
     A_ratio_reacted(i) = rho1(i)*Ut_reacted(i)/(rho2(i)*Ue_reacted(i));
     Cf_reacted(i) = Ue_reacted(i)/c_reacted(i);
+    Ma_e(i) = Ue_reacted(i) / soundspeed(gas);
     reacted_mole_fracs(:,i) = moleFractions(gas);
-    A_e(i) = A_t(i) * A_ratio_reacted(i);
+    A_e(i) = A_t(i) * A_ratio_reacted(i); 
     dia_e(i) = sqrt(A_e(i) / pi)*2;
 end
 g = 9.81; % m/s^2
@@ -87,4 +101,10 @@ title('Mixture Ratio')
 figure(2)
 plot(times,I_sp)
 xlabel('time (s)')
-ylabel('I (specific impulse)');
+% ylabel('I (specific impulse)');
+% 
+% 
+% k = 1.1;
+% po_p = 12;
+% syms Ma
+% sol = solve(po_p == (1 + (k-1)/2 * Ma^2)^(k/(k-1)));
