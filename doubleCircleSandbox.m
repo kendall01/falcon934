@@ -10,8 +10,8 @@ M = 100;
 %[CA, SA, mdot_O2, mdot_f, iRingD, oRingD, centerW, centerH, ringHoles, t_f] = doubleCircleLineAreaFun(N);
 
 %Simulate Burn
-%simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
-
+simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
+return;
 %Calculate Mixture Ratio
 phi = mdot_O2 ./ mdot_f;
 figure(2)
@@ -84,8 +84,8 @@ plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
 plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
 % plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
 % plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
-plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
-plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'g'); hold on;
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
 % plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;
 % plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')
 hold off
