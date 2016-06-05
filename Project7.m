@@ -1,7 +1,7 @@
 clear all;
 close all;
 tic
-phi = linspace(25,1,100);
+phi = linspace(25,1,120);
 
 T0 = zeros(length(phi),1);
 
@@ -21,6 +21,7 @@ Ue = zeros(length(phi),1);
 Ut = zeros(length(phi),1);
 frozen_mole_fracs = zeros(12,length(phi));
 
+g = 9.81;
 
 %reacted vectors
 h_0 = zeros(length(phi),1);
@@ -185,4 +186,13 @@ legend('H', 'H2', 'O', 'O2', 'OH', 'C', 'CO', 'CO2', 'H2O', 'C2H4');
 title('Mole Fractions of Reacted Nozzle');
 plotfixer
 %3740 --> temperature that T0 graph should peak at 
+
+figure(10)
+plot(phi, Cf_frozen.*c_frozen/g, phi, Cf_reacted.*c_reacted/g, 'Linewidth', 1.2);
+title('Theoretical Specific Impulse vs. Mixture Ratio');
+xlabel('Mixture Ratio');
+ylabel('Specifc Impulse [s]');
+legend('Frozen', 'Reacted');
+plotfixer
+
 toc
