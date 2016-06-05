@@ -98,10 +98,15 @@ xlabel('Time')
 ylabel('Phi')
 title('Mixture Ratio')
 
+t_real = linspace(times(1), times(end), final_index - start_index+1);
+Isp_real = thrust(start_index:final_index)./ ((m_dot_O2(start_index:final_index) + (mfuel/1000 / times(end)))*g);
+Isp_real_avg = linspace(mean(Isp_real), mean(Isp_real), final_index - start_index+1);
+
 figure(2)
-plot(times,I_sp)
+plot(times,I_sp, t_real, Isp_real, t_real, Isp_real_avg)
 xlabel('time (s)')
-% ylabel('I (specific impulse)');
+ylabel('Specific Impulse [s]');
+legend('Model', 'Real', 'Real - Avg')
 % 
 % 
 % k = 1.1;
