@@ -11,7 +11,7 @@ M = 100;
 
 %Simulate Burn
 simulateDouble(iRingD(:,1), oRingD(:,1), centerD(:,1), numHoles, N);
-return;
+
 %Calculate Mixture Ratio
 phi = mdot_O2 ./ mdot_f;
 figure(2)
@@ -62,6 +62,8 @@ end
 
 pause(1)
 
+
+%Plots the real vs. simulated hole taper
 IR = .008/.0254;
 OR = .019/.0254;
 iRingDrl = [.34, .325];
@@ -73,19 +75,21 @@ axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in
 %plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;
 plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
 axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
-plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+h1 = plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
 plot(l([1,end]), (		oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
 plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
-plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
-plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
-% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
-% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
-plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
-plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
-% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;
-% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')
+h2 = plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2)
+legend([h1,h2],'Real Fire','Simulated Fire', 'Location', 'BestOutside')
+plotfixer
 hold off

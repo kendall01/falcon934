@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>doubleCircleSandbox</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-06-02"><meta name="DC.source" content="doubleCircleSandbox.m"><style type="text/css">
+      --><title>doubleCircleSandbox</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-06-05"><meta name="DC.source" content="doubleCircleSandbox.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -141,21 +141,23 @@ axis <span class="string">manual</span>; axis <span class="string">equal</span>;
 <span class="comment">%plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;</span>
 plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
 axis <span class="string">manual</span>; axis <span class="string">equal</span>; axis([0 7.375 0 .9975]); xlabel(<span class="string">'Length along grain [in]'</span>); ylabel(<span class="string">'Distance from Centerline [in]'</span>); title(<span class="string">'Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'</span>); hold <span class="string">on</span>;
-plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+h1 = plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
 <span class="comment">% plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;</span>
 <span class="comment">% plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;</span>
 plot(l([1,end]), (		oRingDrl'/2)	+OR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
 plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	<span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
 <span class="comment">% plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;</span>
 <span class="comment">% plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;</span>
-plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
-plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
-<span class="comment">% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;</span>
-<span class="comment">% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;</span>
-plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
-plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'b'</span>); hold <span class="string">on</span>;
-<span class="comment">% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;</span>
-<span class="comment">% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')</span>
+h2 = plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b:'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	<span class="string">'b:'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;</span>
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'b:'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	<span class="string">'b:'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">on</span>;
+<span class="comment">% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2); hold on;</span>
+<span class="comment">% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2)</span>
+legend([h1,h2],<span class="string">'Real Fire'</span>,<span class="string">'Simulated Fire'</span>, <span class="string">'Location'</span>, <span class="string">'BestOutside'</span>)
+plotfixer
 hold <span class="string">off</span>
 </pre><pre class="codeoutput">
 i =
@@ -729,21 +731,23 @@ axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in
 %plot(l([1,end]), 	   -centerD(N-1,[1,M-1])'/2, 			'm'); hold on;
 plot(l([1,end]),  ( 	iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
 axis manual; axis equal; axis([0 7.375 0 .9975]); xlabel('Length along grain [in]'); ylabel('Distance from Centerline [in]'); title('Lengthwise Cross-section of Fuel Grain Showing Tapered Burn'); hold on;
-plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
+h1 = plot(l([1,end]),  (    -iRingDrl'/2)	+IR, 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -(( 	iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((   -iRingDrl'/2)	+IR), 	'r', 'LineWidth', 2); hold on;
 plot(l([1,end]), (		oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
 plot(l([1,end]), (     -oRingDrl'/2)	+OR, 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((	oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
 % plot(l([1,end]), -((   -oRingDrl'/2)	+OR), 	'r', 'LineWidth', 2); hold on;
-plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
-plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b'); hold on;
-% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
-% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b'); hold on;
-plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
-plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'b'); hold on;
-% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b'); hold on;
-% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b')
+h2 = plot(l([1,end]),  ( 	iRingD( N-1,[1,M-1])'/2)	+IR, 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]),  (    -iRingD( N-1,[1,M-1])'/2)	+IR, 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -(( 	iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -iRingD( N-1,[1,M-1])'/2)	+IR), 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]), (		oRingD( N-1,[1,M-1])'/2)	+OR, 	'b:', 'LineWidth', 2); hold on;
+plot(l([1,end]), (     -oRingD( N-1,[1,M-1])'/2)	+OR, 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((	oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2); hold on;
+% plot(l([1,end]), -((   -oRingD( N-1,[1,M-1])'/2)	+OR), 	'b:', 'LineWidth', 2)
+legend([h1,h2],'Real Fire','Simulated Fire', 'Location', 'BestOutside')
+plotfixer
 hold off
 ##### SOURCE END #####
 --></body></html>

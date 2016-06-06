@@ -98,6 +98,8 @@ xlabel('Time')
 ylabel('Phi')
 title('Mixture Ratio')
 
+
+load(
 t_real = linspace(times(1), times(end), final_index - start_index+1);
 Isp_real = thrust(start_index:final_index)./ ((m_dot_O2(start_index:final_index) + (mfuel/1000 / times(end)))*g);
 Isp_real_avg = linspace(mean(Isp_real), mean(Isp_real), final_index - start_index+1);
